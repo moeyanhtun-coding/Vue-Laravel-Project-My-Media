@@ -1,12 +1,17 @@
 import axios from 'axios';
-
+import { mapGetters } from 'vuex';
 export default {
     name: "PostDetail",
     data() {
         return {
             postId: this.$route.query.postId,
-            post: {}
+            post: {},
+            loginStatus: false,
+            viewCount: '',
         }
+    },
+    computed: {
+        ...mapGetters(['storageToken', 'storageUserData']),
     },
     methods: {
         postDetail() {
@@ -36,10 +41,32 @@ export default {
             this.$router.push({
                 name: 'LoginPage'
             })
+        },
+        checkOut() {
+            if (this.storageToken != null &&
+                this.storageToken != undefined &&
+                this.storageToken != ''
+            ) {
+                this.loginStatus = false;
+            } else {
+                this.loginStatus = true;
+            }
+        },
+        logOut() {
+            this.$store.dispatch('setToken', null);
+            this.loginPage();
         }
-
     },
     mounted() {
+        this.checkOut();
+        let data = {
+            user_id: this.storageUserData.id,
+            post_id: this.postId,
+        };
+        axios.post('http://localhost:8000/api/actionLog', data).then((response) => {
+            this.viewCount = response.data.viewCount.length;
+            console.log(this.viewCount);
+        });
         this.postDetail()
     }
 }
