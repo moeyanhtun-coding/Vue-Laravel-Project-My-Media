@@ -16,8 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/LoginPage',
     name: 'LoginPage',
     component: ()=>import('../views/LoginPage.vue')
-  }
-
+  },
 ]
 
 const router = createRouter({
